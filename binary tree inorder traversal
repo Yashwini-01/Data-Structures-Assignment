@@ -1,0 +1,24 @@
+void getInorderVal(struct TreeNode* node, int* result, int* size) {
+    if (node == NULL) {
+        return ;
+    }
+
+    getInorderVal(node->left, result, size);
+    result[(*size)++] = node->val;
+    getInorderVal(node->right, result, size);
+}
+
+int* inorderTraversal(struct TreeNode* root, int* returnSize) {
+    int *result = (int *)malloc(100 * sizeof(int));
+    *returnSize = 0;
+
+    if (root == NULL) {
+        return result;
+    }
+
+    int size = 0;
+    getInorderVal(root, result, &size);
+
+    *returnSize = size;
+    return result;
+}
