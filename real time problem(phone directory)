@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char name[100];
+} Contact;
+
+typedef struct Node {
+    Contact contact;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* top;
+} Stack;
+
+Stack* initializeStack() {
+    Stack* stack = (Stack*)malloc(sizeof(Stack));
+    stack->top = NULL;
+    return stack;
+}
+
+void push(Stack* stack, Contact contact) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->contact = contact;
+    newNode->next = stack->top;
+    stack->top = newNode;
+}
+
+Contact pop(Stack* stack) {
+    if (stack->top == NULL) {
+        Contact emptyContact = {"\0"};
+        return emptyContact;
+    }
+
+    Node* temp = stack->top;
+    Contact poppedContact = temp->contact;
+    stack->top = temp->next;
+    free(temp);
+    return poppedContact;
+}
+
+void searchContacts(Stack* contactStack, const char* prefix) {
+    printf("Contacts with the prefix '%s':\n", prefix);
+
+    Node* temp = contactStack->top;
+
+    while (temp != NULL) {
+        if (strncmp(temp->contact.name, prefix, strlen(prefix)) == 0) {
+            printf("%s\n", temp->contact.name);
+        }
+
+        temp = temp->next;
+    }
+}
+
+void addContact(Stack* contactStack, const char* name) {
+    Contact newContact;
+    strcpy(newContact.name, name);
+
+    push(contactStack, newContact);
+}
+
+void deleteContact(Stack* contactStack) {
+    pop(contactStack);
+}
+
+int main() {
+    Stack* contactStack = initializeStack();
+
+    addContact(contactStack, "john");
+    addContact(contactStack, "jane");
+    addContact(contactStack, "jack");
+    addContact(contactStack, "jason");
+
+    searchContacts(contactStack, "ja");
+
+    deleteContact(contactStack);
+
+    searchContacts(contactStack, "ja");
+
+    return 0;
+}
